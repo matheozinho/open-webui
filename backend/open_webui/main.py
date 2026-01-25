@@ -93,6 +93,7 @@ from open_webui.routers import (
     users,
     utils,
     scim,
+    user_profiles,
 )
 
 from open_webui.routers.retrieval import (
@@ -1419,6 +1420,7 @@ app.include_router(configs.router, prefix="/api/v1/configs", tags=["configs"])
 
 app.include_router(auths.router, prefix="/api/v1/auths", tags=["auths"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
+app.include_router(user_profiles.router, prefix="/api/v1/user-profiles", tags=["user-profiles"])
 
 
 app.include_router(channels.router, prefix="/api/v1/channels", tags=["channels"])

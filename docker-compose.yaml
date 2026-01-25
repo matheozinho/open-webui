@@ -1,4 +1,37 @@
 services:
+  # PostgreSQL Database Service
+  postgres:
+    image: postgres:16-alpine
+    container_name: open-webui-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  # Adminer - Visual Database Management Tool
+  adminer:
+    image: adminer:latest
+    container_name: open-webui-adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    restart: always
+
+  # Open WebUI Service
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
     container_name: open-webui
@@ -6,10 +39,24 @@ services:
       - "3000:8080"
     volumes:
       - open-webui:/app/backend/data
+      # Mount des fichiers UIMA customisés
+      - ./backend/open_webui/models/user_profiles.py:/app/backend/open_webui/models/user_profiles.py
+      - ./backend/open_webui/routers/user_profiles.py:/app/backend/open_webui/routers/user_profiles.py
+      - ./backend/open_webui/utils/memory_bridge.py:/app/backend/open_webui/utils/memory_bridge.py
+      - ./backend/open_webui/routers/openai.py:/app/backend/open_webui/routers/openai.py
+    depends_on:
+      postgres:
+        condition: service_healthy
     environment:
       - "OPENAI_API_BASE_URL=https://openrouter.ai/api/v1"
       - "OPENAI_API_KEY=${OPENROUTER_API_KEY}"
+      # PostgreSQL Configuration
+      - "DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+      # Enable mandatory login
+      - "WEBUI_AUTH=True"
+      - "ENABLE_INITIAL_ADMIN_SIGNUP=False"
     restart: always
 
 volumes:
   open-webui:
+  postgres_data:

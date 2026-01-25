@@ -24,6 +24,7 @@ from sqlalchemy.orm import Session
 from open_webui.internal.db import get_session
 
 from open_webui.models.models import Models
+from open_webui.utils.memory_bridge import MemoryBridge
 from open_webui.config import (
     CACHE_DIR,
 )
@@ -886,6 +887,13 @@ async def generate_chat_completion(
             "email": user.email,
             "role": user.role,
         }
+
+    # UIMA Memory Bridge: Inject user profile context
+    try:
+        payload = MemoryBridge.inject_context_to_form_data(payload, user)
+    except Exception as e:
+        log.warning(f"Memory Bridge injection failed: {e}")
+        # Continue without context injection if there's an error
 
     url = request.app.state.config.OPENAI_API_BASE_URLS[idx]
     key = request.app.state.config.OPENAI_API_KEYS[idx]
