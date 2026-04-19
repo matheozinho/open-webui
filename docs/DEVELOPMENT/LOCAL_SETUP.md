@@ -1,4 +1,4 @@
-# Hot-Reload Development Environment
+# Local Development Setup
 
 ## Overview
 

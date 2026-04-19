@@ -14,7 +14,7 @@ Our primary goal is to ensure the protection and confidentiality of sensitive da
 
 Based on a precedent of an unacceptable degree of spamming and unsolicited communications from third-party platforms, we forcefully reaffirm our stance. **We refuse to engage with, join, or monitor any platforms outside of GitHub for vulnerability reporting.** Our reasons are not just procedural but are deep-seated in the ethos of our project, which champions transparency and direct community interaction inherent in the open-source culture. Any attempts to divert our processes to external platforms will be met with outright rejection. This policy is non-negotiable and understands no exceptions.
 
-Any reports or solicitations arriving from sources other than our designated GitHub repository will be dismissed without consideration. We’ve seen how external engagements can dilute and compromise the integrity of community-driven projects, and we’re not here to gamble with the security and privacy of our user community.
+Any reports or solicitations arriving from sources other than our designated GitHub repository will be dismissed without consideration. We've seen how external engagements can dilute and compromise the integrity of community-driven projects, and we're not here to gamble with the security and privacy of our user community.
 
 ## Reporting a Vulnerability
 
@@ -98,33 +98,3 @@ We appreciate the community's interest in identifying potential vulnerabilities.
 ## Where to report the vulnerability
 
 If you want to report a vulnerability and can meet the outlined requirements, [open a vulnerability report here](https://github.com/open-webui/open-webui/security/advisories/new).
-If you feel like you are not able to follow ALL outlined requirements for vulnerability-specific reasons, still do report it, we will check every report either way.
-
-## Product Security And For Non-Vulnerability Related Security Concerns:
-
-If your concern does not meet the vulnerability requirements outlined above, is not a vulnerability, **but is still related to security concerns**, then use the following channels instead:
-
-- **Documentation issues/improvement ideas:** Open an issue on our [Documentation Repository](https://github.com/open-webui/docs)
-- **Feature requests:** Create a discussion in [GitHub Discussions - Ideas](https://github.com/open-webui/open-webui/discussions/) to discuss with the community if this feature request is wanted by multiple people
-- **Configuration help:** Ask the community for help and guidance on our [Discord Server](https://discord.gg/5rJgQTnV4s) or on [Reddit](https://www.reddit.com/r/OpenWebUI/)
-- **General issues:** Use our [Issue Tracker](https://github.com/open-webui/open-webui/issues)
-
-**Examples of non-vulnerability, still security related concerns:**
-
-- Suggestions for better default configuration values
-- Security hardening recommendations
-- Deployment best practices guidance
-- Unclear configuration instructions
-- Need for additional security documentation
-- Feature requests for optional security enhancements (2FA, audit logging, etc.)
-- General security questions about production deployment
-
-Please use the adequate channel for your specific issue - e.g. best-practice guidance or additional documentation needs into the Documentation Repository, and feature requests into the Main Repository as an issue or discussion.
-
-We regularly audit our internal processes and system architecture for vulnerabilities using a combination of automated and manual testing techniques. We are also planning to implement SAST and SCA scans in our project soon.
-
-For any other immediate concerns, please create an issue in our [issue tracker](https://github.com/open-webui/open-webui/issues) or contact our team on [Discord](https://discord.gg/5rJgQTnV4s).
-
----
-
-_Last updated on **2025-11-06**._

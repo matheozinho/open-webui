@@ -1,10 +1,10 @@
-# Hosting UI and Models separately
+# Reverse Proxy Configuration
 
-Sometimes, it's beneficial to host Ollama, separate from the UI, but retain the RAG and RBAC support features shared across users:
+This guide covers setting up reverse proxies for Open WebUI and Ollama, allowing you to host the UI and models separately while retaining RAG and RBAC features.
 
-# Open WebUI Configuration
+## Apache Configuration
 
-## UI Configuration
+### Open WebUI Reverse Proxy
 
 For the UI configuration, you can set up the Apache VirtualHost as follows:
 
@@ -27,6 +27,8 @@ Enable the site first before you can request SSL:
 
 `a2ensite server.com.conf` # this will enable the site. a2ensite is short for "Apache 2 Enable Site"
 
+### SSL Configuration for Open WebUI
+
 ```
 # For SSL
 <VirtualHost 192.168.1.100:443>
@@ -47,12 +49,9 @@ Enable the site first before you can request SSL:
     SSLProxyEngine on
     SSLCACertificateFile /etc/ssl/virtualmin/170514456865864/ssl.ca
 </VirtualHost>
-
 ```
 
-I'm using virtualmin here for my SSL clusters, but you can also use certbot directly or your preferred SSL method. To use SSL:
-
-### Prerequisites.
+### Prerequisites for SSL
 
 Run the following commands:
 
@@ -67,7 +66,56 @@ Create server.com.conf if it is not yet already created, containing the above `<
 
 Once it's created, run `certbot --apache -d server.com`, this will request and add/create an SSL keys for you as well as create the server.com.le-ssl.conf
 
-# Configuring Ollama Server
+## Nginx Configuration
+
+### Open WebUI Reverse Proxy
+
+```
+server {
+    listen 80;
+    server_name server.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+### SSL Configuration for Open WebUI with Nginx
+
+```
+server {
+    listen 443 ssl http2;
+    server_name server.com;
+
+    ssl_certificate /etc/letsencrypt/live/server.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/server.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+## Ollama Server Configuration
 
 On your latest installation of Ollama, make sure that you have setup your api server from the official Ollama reference:
 
@@ -114,9 +162,9 @@ Save the file by pressing CTRL+S, then press CTRL+X
 
 When your computer restarts, the Ollama server will now be listening on the IP:PORT you specified, in this case 0.0.0.0:11434, or 192.168.254.106:11434 (whatever your local IP address is). Make sure that your router is correctly configured to serve pages from that local IP by forwarding 11434 to your local IP server.
 
-# Ollama Model Configuration
+## Ollama Model Reverse Proxy
 
-## For the Ollama model configuration, use the following Apache VirtualHost setup:
+### Apache Configuration for Ollama
 
 Navigate to the apache sites-available directory:
 
@@ -190,16 +238,34 @@ Navigate to the apache sites-available directory:
 
 ```
 
-Don't forget to restart/reload Apache with `systemctl reload apache2`
+### Nginx Configuration for Ollama
+
+```
+server {
+    listen 80;
+    server_name models.server.city;
+
+    location / {
+        proxy_pass http://localhost:11434;  # or your Ollama port
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+Don't forget to restart/reload your web server:
+
+- Apache: `systemctl reload apache2`
+- Nginx: `systemctl reload nginx`
 
 Open your site at https://server.com!
 
 **Congratulations**, your _**Open-AI-like Chat-GPT style UI**_ is now serving AI with RAG, RBAC and multimodal features! Download Ollama models if you haven't yet done so!
 
 If you encounter any misconfiguration or errors, please file an issue or engage with our discussion. There are a lot of friendly developers here to assist you.
-
-Let's make this UI much more user friendly for everyone!
-
-Thanks for making open-webui your UI Choice for AI!
-
-This doc is made by **Bob Reyes**, your **Open-WebUI** fan from the Philippines.
