@@ -1,0 +1,22 @@
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui-dev
+    command: ["python", "/app/backend/open_webui/__init__.py", "dev", "--reload", "--host", "0.0.0.0", "--port", "8080"]
+    env_file:
+      - .env
+    environment:
+      - "OPENAI_API_BASE_URL=https://openrouter.ai/api/v1"
+      - "OPENAI_API_KEY=${OPENROUTER_API_KEY}"
+      - "DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}"
+      - "WEBUI_AUTH=True"
+      - "ENABLE_INITIAL_ADMIN_SIGNUP=False"
+      - "WEBUI_SECRET_KEY=dev-secret-key"
+      - PYTHONPATH=/app/backend
+    volumes:
+      - ./backend:/app/backend:cached
+      - open-webui:/app/backend/data
+    restart: no
+    depends_on:
+      postgres:
+        condition: service_healthy

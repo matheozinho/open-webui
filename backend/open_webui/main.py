@@ -2426,3 +2426,4 @@ else:
     log.warning(
         f"Frontend build directory not found at '{FRONTEND_BUILD_DIR}'. Serving API only."
     )
+print("Hot-reload test")
